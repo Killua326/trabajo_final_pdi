@@ -1,0 +1,33 @@
+# Datos (pesados, no deben ir a Git)
+data/raw/*
+data/processed/*
+
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/raw/labels/
+!data/raw/labels/PH2_simple_dataset.csv
+
+# Modelos entrenados
+models/*.pth
+models/*.h5
+models/*.pt
+
+# Entornos virtuales
+venv/
+env/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Resultados generados (opcional, según prefieras)
+# results/
+
+# Sistema
+.DS_Store
+Thumbs.db
