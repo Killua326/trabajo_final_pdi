@@ -26,7 +26,7 @@ __pycache__/
 .ipynb_checkpoints/
 
 # Resultados generados (opcional, según prefieras)
-# results/
+results/
 
 # Sistema
 .DS_Store
