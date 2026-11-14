@@ -24,6 +24,7 @@ src/
   explain.py              Grad-CAM, Integrated Gradients y LIME-style + métricas de fidelidad
   eval_explain.py         comparación cualitativa/cuantitativa de técnicas explicativas
   evaluation.py           ROC/AUC por clase, matrices de confusión y CV estratificada
+  app.py                  interfaz web local (Flask): pipeline, comparación y resultados
   run_pipeline.py         demo end-to-end de una imagen + reporte visual
 models/                  pesos (.pt) y clasificadores (.joblib)
 results/                 métricas y reportes
@@ -57,6 +58,28 @@ python src/eval_explain.py --ids IMD039 IMD058   # imágenes concretas
 # 6. Demo completa de una imagen (reporte con Grad-CAM, IG y LIME)
 python src/run_pipeline.py --id IMD039   # IMD039 = melanoma; IMD003 = nevo común
 ```
+
+## Interfaz web (Flask)
+
+Para no ejecutar scripts uno a uno:
+
+```bash
+venv-dl/bin/python src/app.py            # → http://127.0.0.1:5000
+```
+
+- **Dataset**: galería por clase con miniaturas; cada imagen tiene botones
+  *Pipeline* y *Comparar*.
+- **Pipeline**: ejecuta preprocesamiento → segmentación → clasificación →
+  explicabilidad y muestra resultado, probabilidades, Dice y todas las etapas.
+  Los resultados quedan cacheados en `results/pipeline/<id>/`; `?rerun=1`
+  fuerza la re-ejecución.
+- **Comparar**: segmentación clásica vs U-Net (Dice/IoU contra GT) y
+  Grad-CAM vs Integrated Gradients vs LIME con su fidelidad (pointing game,
+  IoU@top20%, AUC de saliencia).
+- **Resultados**: dashboard con métricas de test, AUC por clase, curvas ROC,
+  matrices de confusión, CV estratificada y comparación de explicabilidad.
+
+Requiere `flask` en el entorno: `venv-dl/bin/python -m pip install flask`.
 
 ## Resultados principales
 

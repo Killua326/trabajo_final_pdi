@@ -23,7 +23,7 @@ from pathlib import Path
 
 import cv2
 import numpy as np
-from flask import Flask, abort, render_template, send_file
+from flask import Flask, abort, render_template, request, send_file
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -90,14 +90,16 @@ def _pipeline_fresh(img_id):
 @app.route("/pipeline/<img_id>")
 @app.route("/pipeline/<img_id>/")
 def pipeline(img_id):
-    rerun = False
+    force = request.args.get("rerun") == "1"
     out_dir = RESULTS / "pipeline" / img_id
-    if not _pipeline_fresh(img_id):
+    if force or not _pipeline_fresh(img_id):
         from run_pipeline import main as run_demo
 
         summary = run_demo(img_id)
         (out_dir / "meta.json").write_text(json.dumps(summary, indent=2))
         rerun = True
+    else:
+        rerun = False
     meta = json.loads((out_dir / "meta.json").read_text())
     stages = [
         ("0_preprocessed.png", "Preprocesada (vello + MSR)"),
@@ -110,6 +112,14 @@ def pipeline(img_id):
 
 
 # -------------------------------------------------------------- /compare ---
+def to_b64(img, quality=88):
+    """Codifica una imagen (BGR o gris) como data-URI JPEG para HTML."""
+    import base64
+
+    ok, buf = cv2.imencode(".jpg", img, [cv2.IMWRITE_JPEG_QUALITY, quality])
+    return "data:image/jpeg;base64," + base64.b64encode(buf.tobytes()).decode()
+
+
 @app.route("/compare/<img_id>")
 def compare(img_id):
     img, gt = load_image_and_mask(img_id, preprocessed_dir="preprocessed")
@@ -125,8 +135,8 @@ def compare(img_id):
     d_clas, iou_clas = dice_iou(classic_mask, gt)
 
     # ---- explicabilidad: Grad-CAM vs IG vs LIME ----
-    from explain import fidelity_metrics, integrated_gradients
-    from features_deep import _to_tensor, crop_lesion, lesion_bbox
+    from explain import fidelity_metrics, integrated_gradients, lime_saliency_classic
+    from features_deep import _to_tensor, lesion_bbox
 
     cnn, cam = st["cnn"], st["cam"]
     y0, y1, x0, x1 = lesion_bbox(gt, 12)
@@ -134,29 +144,46 @@ def compare(img_id):
     x = _to_tensor(crop, 224)[None]
     cam_sal, probs, cls = cam(x)
     ig_sal, _, _ = integrated_gradients(cnn, x, class_idx=cls)
+    sal_l, _, _ = lime_saliency_classic(img, gt, get_classic_predict_fn())
 
-    def overlay(sal, base):
+    def overlay_gt(sal, base_bgr, gt_mask):
+        """Mapa de saliencia en JET sobre la imagen + contorno GT en verde."""
         h = (np.clip(sal, 0, 1) * 255).astype(np.uint8)
-        return cv2.addWeighted(base, 0.55, cv2.applyColorMap(h, cv2.COLORMAP_JET), 0.45, 0)[:, :, ::-1]
+        if h.shape[:2] != base_bgr.shape[:2]:
+            h = cv2.resize(h, (base_bgr.shape[1], base_bgr.shape[0]))
+        o = cv2.addWeighted(base_bgr, 0.55, cv2.applyColorMap(h, cv2.COLORMAP_JET), 0.45, 0)
+        cnts, _ = cv2.findContours(gt_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cv2.drawContours(o, cnts, -1, (0, 255, 0), 2)
+        return o
 
     cam_full = cv2.resize(cam_sal, (crop.shape[1], crop.shape[0]))
     ig_full = cv2.resize(ig_sal, (crop.shape[1], crop.shape[0]))
-    from explain import lime_saliency_classic
-
-    sal_l, _, _ = lime_saliency_classic(img, gt, get_classic_predict_fn())
-    sal_l_c = cv2.resize(sal_l, (crop.shape[1], crop.shape[0]))
 
     expl = {
-        "Grad-CAM": {"panel": overlay(cam_full, crop), "metrics": fidelity_metrics(cam_full, gt_crop)},
-        "Integrated Gradients": {"panel": overlay(ig_full, crop), "metrics": fidelity_metrics(ig_full, gt_crop)},
-        "LIME (clásico)": {"panel": overlay(sal_l_c, crop), "metrics": fidelity_metrics(sal_l, gt)},
+        "Grad-CAM": {"metrics": fidelity_metrics(cam_full, gt_crop),
+                     "img": to_b64(overlay_gt(cam_full, crop, gt_crop))},
+        "Integrated Gradients": {"metrics": fidelity_metrics(ig_full, gt_crop),
+                                 "img": to_b64(overlay_gt(ig_full, crop, gt_crop))},
+        "LIME (clásico)": {"metrics": fidelity_metrics(sal_l, gt),
+                           "img": to_b64(overlay_gt(sal_l, img, gt))},
+    }
+
+    def mask_on_image(mask):
+        o = cv2.addWeighted(img, 0.7, cv2.cvtColor(mask * 255, cv2.COLOR_GRAY2BGR), 0.3, 0)
+        cnts, _ = cv2.findContours(gt, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cv2.drawContours(o, cnts, -1, (0, 255, 0), 2)
+        return cv2.cvtColor(o, cv2.COLOR_BGR2RGB)
+
+    imgs = {
+        "unet": {"img": to_b64(mask_on_image(unet_mask))},
+        "classic": {"img": to_b64(mask_on_image(classic_mask))},
+        "gt": {"img": to_b64(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))},
     }
 
     return render_template(
         "compare.html", img_id=img_id, true_class=IDX_TO_CLASS[cls],
-        gt=gt, classic_mask=classic_mask, unet_mask=unet_mask,
         d_unet=d_unet, iou_unet=iou_unet, d_clas=d_clas, iou_clas=iou_clas,
-        expl=expl, crop=crop,
+        expl=expl, imgs=imgs,
     )
 
 

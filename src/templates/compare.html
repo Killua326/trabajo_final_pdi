@@ -33,15 +33,9 @@
   {% endfor %}
 </div>
 
-<div class="grid two">
-  <div class="card">
-    <img src="{{ imgs.crop_gt.img }}" alt="recorte GT">
-    <div class="card-body"><strong>Recorte de la lesión (contorno GT en verde)</strong></div>
-  </div>
-  <div class="card">
-    <img src="{{ imgs.gt.img }}" alt="GT completa">
-    <div class="card-body"><strong>Imagen preprocesada con máscara GT</strong></div>
-  </div>
+<div class="card wide">
+  <img src="{{ imgs.gt.img }}" alt="GT completa">
+  <div class="card-body"><strong>Imagen preprocesada con máscara GT (contorno verde)</strong></div>
 </div>
 
 <a class="btn" href="/">← Volver al dataset</a>
