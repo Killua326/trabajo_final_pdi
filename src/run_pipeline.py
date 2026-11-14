@@ -170,6 +170,16 @@ def main(img_id, seg_arch="unet"):
     fig.savefig(out_dir / "report.png", dpi=140, bbox_inches="tight")
     print(f"Reporte -> {out_dir / 'report.png'}")
 
+    return {
+        "img_id": img_id,
+        "pred_class": IDX_TO_CLASS[pred_class],
+        "pred_probs": {IDX_TO_CLASS[i]: float(proba[0][i]) for i in range(3)},
+        "dice_unet": float(d_unet[0]),
+        "dice_classical": float(d_class[0]),
+        "hair_status": status,
+        "out_dir": str(out_dir),
+    }
+
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
