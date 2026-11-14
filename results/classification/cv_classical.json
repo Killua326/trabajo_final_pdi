@@ -1,0 +1,102 @@
+{
+  "SVM (rasgos cl\u00e1sicos)": {
+    "folds": [
+      {
+        "fold": 1,
+        "balanced_accuracy": 0.5,
+        "auc_ovr_macro": 0.7803819444444445
+      },
+      {
+        "fold": 2,
+        "balanced_accuracy": 0.6666666666666666,
+        "auc_ovr_macro": 0.8077256944444443
+      },
+      {
+        "fold": 3,
+        "balanced_accuracy": 0.6666666666666666,
+        "auc_ovr_macro": 0.7977430555555557
+      },
+      {
+        "fold": 4,
+        "balanced_accuracy": 0.5208333333333334,
+        "auc_ovr_macro": 0.7252604166666666
+      },
+      {
+        "fold": 5,
+        "balanced_accuracy": 0.6458333333333334,
+        "auc_ovr_macro": 0.8402777777777777
+      }
+    ],
+    "balanced_accuracy_mean": 0.6,
+    "balanced_accuracy_std": 0.07383352144445561,
+    "auc_ovr_macro_mean": 0.7902777777777777,
+    "auc_ovr_macro_std": 0.037908692753826405,
+    "confusion_oof": [
+      [
+        41,
+        39,
+        0
+      ],
+      [
+        31,
+        39,
+        10
+      ],
+      [
+        2,
+        6,
+        32
+      ]
+    ]
+  },
+  "Random Forest": {
+    "folds": [
+      {
+        "fold": 1,
+        "balanced_accuracy": 0.625,
+        "auc_ovr_macro": 0.8218315972222222
+      },
+      {
+        "fold": 2,
+        "balanced_accuracy": 0.6875,
+        "auc_ovr_macro": 0.8294270833333334
+      },
+      {
+        "fold": 3,
+        "balanced_accuracy": 0.6458333333333334,
+        "auc_ovr_macro": 0.7990451388888888
+      },
+      {
+        "fold": 4,
+        "balanced_accuracy": 0.6458333333333334,
+        "auc_ovr_macro": 0.7834201388888888
+      },
+      {
+        "fold": 5,
+        "balanced_accuracy": 0.7916666666666666,
+        "auc_ovr_macro": 0.8745659722222222
+      }
+    ],
+    "balanced_accuracy_mean": 0.6791666666666667,
+    "balanced_accuracy_std": 0.05980291706003049,
+    "auc_ovr_macro_mean": 0.8216579861111111,
+    "auc_ovr_macro_std": 0.031090570359790265,
+    "confusion_oof": [
+      [
+        52,
+        28,
+        0
+      ],
+      [
+        24,
+        47,
+        9
+      ],
+      [
+        0,
+        8,
+        32
+      ]
+    ]
+  }
+}

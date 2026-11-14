@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Comparación de métodos — {{ img_id }}</h1>
+<p class="sub">Clase real (CNN): <strong>{{ true_class }}</strong></p>
+
+<h2>Segmentación</h2>
+<div class="grid two">
+  <div class="card"><img src="{{ imgs.unet.img }}" alt="unet">
+    <div class="card-body"><strong>U-Net</strong> · Dice {{ '%.3f'|format(d_unet) }} · IoU {{ '%.3f'|format(iou_unet) }}</div></div>
+  <div class="card"><img src="{{ imgs.classic.img }}" alt="clásica">
+    <div class="card-body"><strong>Clásica (Otsu LAB)</strong> · Dice {{ '%.3f'|format(d_clas) }} · IoU {{ '%.3f'|format(iou_clas) }}</div></div>
+</div>
+
+<h2>Explicabilidad (fidelidad vs máscara GT)</h2>
+<table>
+  <thead><tr><th>Técnica</th><th>Pointing game</th><th>IoU@top20%</th><th>AUC saliencia</th></tr></thead>
+  <tbody>
+    {% for name, e in expl.items() %}
+    <tr><td><strong>{{ name }}</strong></td>
+        <td>{{ '✔' if e.metrics.pointing_game else '✘' }}</td>
+        <td>{{ '%.3f'|format(e.metrics.iou_top) }}</td>
+        <td>{{ '%.3f'|format(e.metrics.sal_auc) }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="grid three">
+  {% for name, e in expl.items() %}
+  <div class="card">
+    <img src="{{ e.img }}" alt="{{ name }}">
+    <div class="card-body"><strong>{{ name }}</strong></div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card wide">
+  <img src="{{ imgs.gt.img }}" alt="GT completa">
+  <div class="card-body"><strong>Imagen preprocesada con máscara GT (contorno verde)</strong></div>
+</div>
+
+<a class="btn" href="/">← Volver al dataset</a>
+{% endblock %}

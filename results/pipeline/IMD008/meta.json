@@ -1,0 +1,13 @@
+{
+  "img_id": "IMD008",
+  "pred_class": "Atypical Nevus",
+  "pred_probs": {
+    "Common Nevus": 0.39582435354814094,
+    "Atypical Nevus": 0.5522415491175302,
+    "Melanoma": 0.05193409733432889
+  },
+  "dice_unet": 0.6289930806296938,
+  "dice_classical": 0.22360850761711346,
+  "hair_status": "inpainted",
+  "out_dir": "/home/rogo/Programming/Python/Proyectos de Procesamiento de Imagenes/trabajo_final_pdi/results/pipeline/IMD008"
+}

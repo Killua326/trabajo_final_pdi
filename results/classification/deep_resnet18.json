@@ -1,0 +1,7 @@
+{
+  "model": "resnet18 (transferencia+fine-tuning)",
+  "accuracy": 0.45,
+  "balanced_accuracy": 0.4791666666666667,
+  "macro_f1": 0.4746450304259635,
+  "val_balanced_accuracy": 0.6875
+}

@@ -1,0 +1,7 @@
+{
+  "model": "efficientnet_b0 (transferencia+fine-tuning)",
+  "accuracy": 0.55,
+  "balanced_accuracy": 0.6041666666666666,
+  "macro_f1": 0.567779013718947,
+  "val_balanced_accuracy": 0.6666666666666666
+}

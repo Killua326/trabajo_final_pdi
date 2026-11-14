@@ -1,0 +1,26 @@
+{
+  "SVM (rasgos cl\u00e1sicos)": {
+    "Common Nevus": 0.7708333333333333,
+    "Atypical Nevus": 0.6119791666666667,
+    "Melanoma": 0.94921875,
+    "macro": 0.77734375
+  },
+  "Random Forest (rasgos)": {
+    "Common Nevus": 0.7552083333333334,
+    "Atypical Nevus": 0.6171875,
+    "Melanoma": 0.9453125,
+    "macro": 0.7725694444444445
+  },
+  "SVM (embeddings ResNet18)": {
+    "Common Nevus": 0.7213541666666666,
+    "Atypical Nevus": 0.5755208333333334,
+    "Melanoma": 0.76171875,
+    "macro": 0.6861979166666666
+  },
+  "CNN ResNet-18 (fine-tuned)": {
+    "Common Nevus": 0.7291666666666667,
+    "Atypical Nevus": 0.4817708333333333,
+    "Melanoma": 0.86328125,
+    "macro": 0.69140625
+  }
+}

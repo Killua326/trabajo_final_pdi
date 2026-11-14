@@ -1,6 +1,7 @@
 # Datos (pesados, no deben ir a Git)
 data/raw/*
 data/processed/*
+images/
 
 !data/raw/.gitkeep
 !data/processed/.gitkeep
@@ -14,6 +15,7 @@ models/*.pt
 
 # Entornos virtuales
 venv/
+venv-dl/
 env/
 .venv/
 

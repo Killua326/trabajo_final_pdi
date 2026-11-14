@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% set active = 'results' %}
+{% block content %}
+<h1>Resultados</h1>
+
+<h2>Split de test — métricas</h2>
+<table>
+  <thead><tr><th>Modelo</th><th>Acc</th><th>bAcc</th><th>macro-F1</th><th>AUC OVR</th></tr></thead>
+  <tbody>
+  {% for k, v in classic.items() %}
+    <tr><td>{{ v.model }}</td><td>{{ '%.3f'|format(v.accuracy) }}</td><td>{{ '%.3f'|format(v.balanced_accuracy) }}</td><td>{{ '%.3f'|format(v.macro_f1) }}</td><td>{{ '%.3f'|format(v.auc_ovr) }}</td></tr>
+  {% endfor %}
+  {% for name, v in deep.items() %}
+    {% if v %}
+    <tr><td>{{ name }} (transferencia+FT)</td><td>{{ '%.3f'|format(v.accuracy) }}</td><td>{{ '%.3f'|format(v.balanced_accuracy) }}</td><td>{{ '%.3f'|format(v.macro_f1) }}</td><td>—</td></tr>
+    {% endif %}
+  {% endfor %}
+  </tbody>
+</table>
+
+{% if auc %}
+<h2>AUC por clase (test, one-vs-rest)</h2>
+<table>
+  <thead><tr><th>Modelo</th>{% for c in ['Common Nevus', 'Atypical Nevus', 'Melanoma'] %}<th>{{ c }}</th>{% endfor %}<th>macro</th></tr></thead>
+  <tbody>
+  {% for model, row in auc.items() %}
+    <tr><td>{{ model }}</td>
+    {% for c in ['Common Nevus', 'Atypical Nevus', 'Melanoma'] %}<td>{{ '%.3f'|format(row[c]) }}</td>{% endfor %}
+    <td><strong>{{ '%.3f'|format(row.macro) }}</strong></td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if cv_classical %}
+<h2>Validación cruzada estratificada (5 folds, n=200, out-of-fold)</h2>
+<table>
+  <thead><tr><th>Modelo</th><th>bAcc (CV)</th><th>AUC OVR (CV)</th></tr></thead>
+  <tbody>
+  {% for name, r in cv_classical.items() %}
+    <tr><td>{{ name }}</td>
+    <td>{{ '%.3f'|format(r.balanced_accuracy_mean) }} ± {{ '%.3f'|format(r.balanced_accuracy_std) }}</td>
+    <td>{{ '%.3f'|format(r.auc_ovr_macro_mean) }} ± {{ '%.3f'|format(r.auc_ovr_macro_std) }}</td></tr>
+  {% endfor %}
+  {% if cv_deep %}
+    <tr><td>CNN {{ cv_deep.arch }} ({{ cv_deep.epochs_per_fold }} épocas/fold)</td>
+    <td>{{ '%.3f'|format(cv_deep.balanced_accuracy_mean) }} ± {{ '%.3f'|format(cv_deep.balanced_accuracy_std) }}</td>
+    <td>{{ '%.3f'|format(cv_deep.auc_ovr_macro_mean) }} ± {{ '%.3f'|format(cv_deep.auc_ovr_macro_std) }}</td></tr>
+  {% endif %}
+  </tbody>
+</table>
+{% endif %}
+
+{% if explain %}
+<h2>Fidelidad de las técnicas explicativas (media sobre muestra de test)</h2>
+<table>
+  <thead><tr><th>Técnica</th><th>n</th><th>Pointing game</th><th>IoU@top20%</th><th>AUC saliencia</th></tr></thead>
+  <tbody>
+  {% for name, s in explain.items() %}
+    <tr><td>{{ name }}</td><td>{{ s.n }}</td><td>{{ '%.2f'|format(s.pointing_game) }}</td>
+    <td>{{ '%.3f'|format(s.iou_top.mean) }} ± {{ '%.3f'|format(s.iou_top.std) }}</td>
+    <td>{{ '%.3f'|format(s.sal_auc.mean) }} ± {{ '%.3f'|format(s.sal_auc.std) }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% for title, path in figures %}
+  <h2>{{ title }}</h2>
+  <div class="card wide"><img src="/media/results/{{ path }}" alt="{{ title }}"></div>
+{% endfor %}
+{% endblock %}
