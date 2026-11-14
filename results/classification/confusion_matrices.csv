@@ -1,0 +1,13 @@
+modelo,clase_real,pred_Common Nevus,pred_Atypical Nevus,pred_Melanoma
+SVM (rasgos clásicos),Common Nevus,6,10,0
+SVM (rasgos clásicos),Atypical Nevus,6,7,3
+SVM (rasgos clásicos),Melanoma,0,3,5
+Random Forest (rasgos),Common Nevus,7,9,0
+Random Forest (rasgos),Atypical Nevus,5,9,2
+Random Forest (rasgos),Melanoma,0,2,6
+SVM (embeddings ResNet18),Common Nevus,7,9,0
+SVM (embeddings ResNet18),Atypical Nevus,4,7,5
+SVM (embeddings ResNet18),Melanoma,2,1,5
+CNN ResNet-18 (fine-tuned),Common Nevus,7,9,0
+CNN ResNet-18 (fine-tuned),Atypical Nevus,6,6,4
+CNN ResNet-18 (fine-tuned),Melanoma,0,3,5

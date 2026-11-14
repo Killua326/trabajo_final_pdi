@@ -1,0 +1,6 @@
+modelo,pred_Common Nevus,pred_Atypical Nevus,pred_Melanoma
+SVM (rasgos clásicos),12,20,8
+Random Forest (rasgos clásicos),12,20,8
+SVM (embeddings ResNet18),17,15,8
+Ensemble (votación suave),12,20,8
+Ensemble (stacking LR),12,19,9
