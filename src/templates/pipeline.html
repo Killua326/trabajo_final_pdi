@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Pipeline — {{ img_id }}</h1>
+{% if rerun %}<p class="ok">✔ Pipeline ejecutado y cacheado en <code>{{ m.out_dir }}</code></p>
+{% else %}<p class="sub">Resultados cacheados. <a href="/pipeline/{{ img_id }}?rerun=1">Volver a ejecutar</a></p>{% endif %}
+
+<div class="summary">
+  <div>
+    <span class="label">Clase predicha</span>
+    <span class="big">{{ m.pred_class }}</span>
+  </div>
+  <div class="bars">
+    {% for cls, p in m.pred_probs.items() %}
+    <div class="bar-row"><span>{{ cls }}</span>
+      <div class="bar"><div class="fill {{ 'hi' if loop.first }}" style="width: {{ (p*100)|round(0) }}%"></div></div>
+      <span class="num">{{ '%.2f'|format(p) }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  <div>
+    <span class="label">Dice U-Net</span><span class="big">{{ '%.3f'|format(m.dice_unet) }}</span>
+    <span class="label">Dice clásica</span><span class="big">{{ '%.3f'|format(m.dice_classical) }}</span>
+    <span class="label">Vello</span><span>{{ m.hair_status or '—' }}</span>
+  </div>
+</div>
+
+<div class="grid two">
+  {% for f, title in stages %}
+  <div class="card">
+    <img src="/media/results/pipeline/{{ img_id }}/{{ f }}" alt="{{ title }}">
+    <div class="card-body"><strong>{{ title }}</strong></div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card wide">
+  <img src="/media/results/pipeline/{{ img_id }}/report.png" alt="reporte completo">
+  <div class="card-body"><strong>Reporte completo</strong></div>
+</div>
+
+<a class="btn" href="/">← Volver al dataset</a>
+<a class="btn ghost" href="/compare/{{ img_id }}">⚖ Comparar métodos</a>
+{% endblock %}

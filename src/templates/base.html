@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dermoscopia PDI — {{ title or "Inicio" }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <a class="brand" href="/">🩺 Dermoscopia <span>PDI</span></a>
+    <nav>
+      <a href="/" {{ 'class=active' if active=='home' }}>Dataset</a>
+      <a href="/results" {{ 'class=active' if active=='results' }}>Resultados</a>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer>Trabajo Final PDI · dataset PH2/IMD (200 imágenes, 3 clases) · Flask local</footer>
+</body>
+</html>

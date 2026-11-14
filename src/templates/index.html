@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% set active = 'home' %}
+{% block content %}
+<h1>Dataset</h1>
+<p class="sub">Selecciona una imagen para ejecutar el pipeline completo o comparar métodos.</p>
+
+{% for cls, ids in by_class.items() %}
+  <h2>{{ cls }} <span class="pill">{{ ids|length }} imágenes</span></h2>
+  <div class="grid">
+    {% for id in ids %}
+    <div class="card">
+      <a href="/pipeline/{{ id }}"><img loading="lazy" src="/thumb/{{ id }}" alt="{{ id }}"></a>
+      <div class="card-body">
+        <strong>{{ id }}</strong>
+        <div class="actions">
+          <a class="btn small" href="/pipeline/{{ id }}">▶ Pipeline</a>
+          <a class="btn small ghost" href="/compare/{{ id }}">⚖ Comparar</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% endfor %}
+{% endblock %}
